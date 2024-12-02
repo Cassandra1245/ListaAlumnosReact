@@ -30,12 +30,13 @@ function App() {
         <ul>
           {ListaArticulos.map(articulo => (
             <li key={articulo.id}>
-              {articulo.nombre}
+              <h3>{articulo.nombre}</h3>
+              <p>{articulo.descripcion}</p>
+              <p>{articulo.precio}</p>
               <button onClick={() => setCarritoCompra([...CarritoCompra, articulo])} >Añadir al carrito</button>
             </li>
           ))}
         </ul>
-
         <button onClick={setCarritoVisibilidad}>
         {showElement ? 'Ocultar carrito' : 'Mostrar carrito'}
         </button>
