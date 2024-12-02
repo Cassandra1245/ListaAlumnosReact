@@ -4,49 +4,56 @@ import './App.css';
 import Carrito from './Carrito';
 
 function App() {
-
-  const [ListaArticulos, setListaArticulos] = useState([])
-  const [CarritoCompra, setCarritoCompra] = useState([])
-  const [showElement, setShowElement] = useState([false])
+  const [ListaArticulos, setListaArticulos] = useState([]);
+  const [CarritoCompra, setCarritoCompra] = useState([]);
+  const [showElement, setShowElement] = useState(false);
 
   useEffect(() => {
-
     const fetchListaArticulos = async () => {
       const response = await fetch('./articulos_navideños.json');
       const data = await response.json();
       setListaArticulos(data);
     };
     fetchListaArticulos();
-  }, [])
+  }, []);
 
-  function setCarritoVisibilidad() {
-    setShowElement(prevState => !prevState); 
-  }
+  const setCarritoVisibilidad = () => {
+    setShowElement((prevState) => !prevState);
+  };
+
+  const añadirAlCarrito = (articulo) => {
+    if (!CarritoCompra.some((item) => item.id === articulo.id)) {
+      setCarritoCompra([...CarritoCompra, articulo]);
+    } 
+  };
 
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <ul>
-          {ListaArticulos.map(articulo => (
+          {ListaArticulos.map((articulo) => (
             <li key={articulo.id}>
               <h3>{articulo.nombre}</h3>
               <p>{articulo.descripcion}</p>
               <p>{articulo.precio}</p>
-              <button onClick={() => setCarritoCompra([...CarritoCompra, articulo])} >Añadir al carrito</button>
+              <input
+                type="button"
+                value="Añadir al carrito"
+                onClick={() => añadirAlCarrito(articulo)}
+              />
             </li>
           ))}
         </ul>
-        <button onClick={setCarritoVisibilidad}>
-        {showElement ? 'Ocultar carrito' : 'Mostrar carrito'}
-        </button>
-        <div >
-            {showElement && <Carrito carrito={CarritoCompra}/>}
-        </div>
+        <input
+          type="button"
+          value={showElement ? 'Ocultar carrito' : 'Mostrar carrito'}
+          onClick={setCarritoVisibilidad}
+        />
+        <div>{showElement && <Carrito carrito={CarritoCompra} />}</div>
       </header>
     </div>
   );
 }
 
 export default App;
-
