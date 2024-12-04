@@ -1,30 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
+import Asignaturas from './Asignaturas';
 import './App.css';
-import Carrito from './Carrito';
 
 function App() {
-  const [ListaArticulos, setListaArticulos] = useState([]);
-  const [CarritoCompra, setCarritoCompra] = useState([]);
-  const [showElement, setShowElement] = useState(false);
+  const [ListaAlumnos, setListaAlumnos] = useState([]);
+  const [showElements, setShowElements] = useState({});
 
   useEffect(() => {
     const fetchListaArticulos = async () => {
-      const response = await fetch('./articulos_navideños.json');
+      const response = await fetch('./alumnos.json');
       const data = await response.json();
-      setListaArticulos(data);
+      setListaAlumnos(data.alumnos);
     };
     fetchListaArticulos();
   }, []);
 
-  const setCarritoVisibilidad = () => {
-    setShowElement((prevState) => !prevState);
-  };
-
-  const añadirAlCarrito = (articulo) => {
-    if (!CarritoCompra.some((item) => item.id === articulo.id)) {
-      setCarritoCompra([...CarritoCompra, articulo]);
-    } 
+  const setNotasVisibilidad = (nombreAlumno) => {
+    setShowElements((prevState) => ({
+      ...prevState,
+      [nombreAlumno]: !prevState[nombreAlumno]
+    }));
   };
 
   return (
@@ -32,25 +28,13 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <ul>
-          {ListaArticulos.map((articulo) => (
-            <li key={articulo.id}>
-              <h3>{articulo.nombre}</h3>
-              <p>{articulo.descripcion}</p>
-              <p>{articulo.precio}</p>
-              <input
-                type="button"
-                value="Añadir al carrito"
-                onClick={() => añadirAlCarrito(articulo)}
-              />
+          {ListaAlumnos.map((alumno) => (
+            <li key={alumno.nombre}>
+               <button onClick={() =>setNotasVisibilidad(alumno.nombre)}>{alumno.nombre}</button>
+               {showElements[alumno.nombre] && <Asignaturas alumno={alumno} />}
             </li>
           ))}
         </ul>
-        <input
-          type="button"
-          value={showElement ? 'Ocultar carrito' : 'Mostrar carrito'}
-          onClick={setCarritoVisibilidad}
-        />
-        <div>{showElement && <Carrito carrito={CarritoCompra} />}</div>
       </header>
     </div>
   );
