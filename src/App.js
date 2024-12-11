@@ -3,9 +3,12 @@ import logo from './logo.svg';
 import Asignaturas from './Asignaturas';
 import './App.css';
 
+
+
 function App() {
   const [ListaAlumnos, setListaAlumnos] = useState([]);
   const [showElements, setShowElements] = useState({});
+  const [filtrado, setFiltrado] = useState("");
 
   useEffect(() => {
     const fetchListaArticulos = async () => {
@@ -23,16 +26,25 @@ function App() {
     }));
   };
 
+  const handleChange = (event) => {
+    setFiltrado(event.target.value);
+  };
+
+  const AlumnoFiltrado = ListaAlumnos.filter((alumno) => {
+    return alumno.nombre.toLowerCase().startsWith(filtrado.toLowerCase());
+  });
+
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
+        <input type="text"  value={filtrado} onChange={handleChange} placeholder="Filtrar por nombre"/>
         <ul>
-          {ListaAlumnos.map((alumno) => (
-            <li key={alumno.nombre}>
-               <button onClick={() =>setNotasVisibilidad(alumno.nombre)}>{alumno.nombre}</button>
-               {showElements[alumno.nombre] && <Asignaturas alumno={alumno} />}
-            </li>
+          {AlumnoFiltrado.map((alumno) => (
+            <div key={alumno.nombre}>
+              <button onClick={() => setNotasVisibilidad(alumno.nombre)}>{alumno.nombre}</button>
+              {showElements[alumno.nombre] && <Asignaturas alumno={alumno} />}
+            </div>
           ))}
         </ul>
       </header>
