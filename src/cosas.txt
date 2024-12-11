@@ -1,0 +1,559 @@
+import React from 'react';
+
+function Carta({carta, onClick, disabled }) {
+  return (
+    <button
+      className="card-back"
+      onClick={onClick}
+      disabled={disabled}
+      >
+      {carta.disposicion ? (
+        <span className="card-front">{carta.carta}</span> // Contenido cuando está volteada
+      ) : (
+        <span className="hidden-content"></span> // Parte trasera
+      )}
+    </button>
+  );
+}
+
+export default Carta;
+
+------------------------------------------------------
+
+
+import React from 'react';
+import Tablero from './Tablero'; // Importamos el componente Tablero
+import logo from './logo.svg';
+import './App.css';
+
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <Tablero />
+      </header>
+    </div>
+  );
+}
+
+export default App;
+
+------------------------------------------------------
+
+import React, { useState } from 'react';
+import Carta from './Carta'; // Importamos el componente Carta
+import './App.css';
+
+function Tablero() {
+    const generarCartasAleatorias = () => {
+        const valores = [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6];  
+
+
+        // Mezclando los valores paras las cartas
+        for (let i = valores.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [valores[i], valores[j]] = [valores[j], valores[i]]; 
+        }
+    
+        // Creaando cada carta
+        const cartas = valores.map((valor) => ({
+          carta: valor,
+          disposicion: false,
+          Accesibilidad: true,
+        }));
+
+        return cartas
+        
+      };
+    
+  const [tablero, setCartas] = useState(generarCartasAleatorias());
+  const [comparacion, setComparacion] = useState([]);
+
+  function Almacenar(index) {
+    if (tablero[index].Accesibilidad) {
+      setComparacion((prev) => {
+        const nuevaComparacion = [...prev, index];
+        condiciones(nuevaComparacion);
+        return nuevaComparacion;
+      });
+    }
+  }
+
+  const condiciones = (comparacion) => {
+    if (comparacion.length === 1) {
+      const nuevoTablero = [...tablero];
+      nuevoTablero[comparacion[0]].disposicion = true;
+      nuevoTablero[comparacion[0]].Accesibilidad = false;
+      setCartas(nuevoTablero);
+    } else if (comparacion.length === 2) {
+      const [index1, index2] = comparacion;
+      const nuevoTablero = [...tablero];
+
+      nuevoTablero[index1].disposicion = true;
+      nuevoTablero[index2].disposicion = true;
+      setCartas(nuevoTablero);
+
+      if (tablero[index1].carta === tablero[index2].carta) {
+        nuevoTablero[index1].Accesibilidad = false;
+        nuevoTablero[index2].Accesibilidad = false;
+        setCartas(nuevoTablero);
+        setComparacion([]);
+      } else {
+        setTimeout(() => {
+          nuevoTablero[index1].disposicion = false;
+          nuevoTablero[index2].disposicion = false;
+          nuevoTablero[index1].Accesibilidad = true;
+          setCartas(nuevoTablero);
+          setComparacion([]);
+        }, 1000);
+      }
+    }
+  };
+
+  return (
+    <div className="cards-container">
+      {tablero.map((item, index) => (
+        <Carta
+          key={index}
+          carta={item}
+          onClick={() => Almacenar(index)}
+          disabled={!item.Accesibilidad}
+        />
+      ))}
+    </div>
+  );
+}
+
+export default Tablero;
+
+------------------------------------------------------
+
+import React, { useState } from 'react';
+import './App.css';
+
+function App() {
+
+  const [array, setArray] = useState([
+    { Matricula: '1425BTY', Marca: 'Peugeot', Modelo: '3008', Tipo: 'híbrido' },
+    { Matricula: '1762MNY', Marca: 'Mercedes', Modelo: 'EQS', Tipo: 'Diesel' },
+    { Matricula: '9882TPK', Marca: 'Renault', Modelo: '4 E-Tech', Tipo: 'Eléctrico' },
+    { Matricula: '6634TRV', Marca: 'Volswagen', Modelo: 'Golf', Tipo: 'Gasolina' },
+    { Matricula: '2285RPL', Marca: 'Toyota', Modelo: 'RAV4', Tipo: 'hibrido' },
+    { Matricula: '1782PRT', Marca: 'Peugeot', Modelo: '5008', Tipo: 'diesel' }
+  ]);
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <p>Autos:</p>
+        <div>
+          {array.map((auto, index) => (
+            <div key={index} className="StyledTextComponent">
+              <p>{auto.Matricula} - {auto.Marca} {auto.Modelo}({auto.Tipo})</p>
+            </div>
+          ))}
+        </div>
+      </header >
+    </div >
+  );
+}
+
+export default App;
+
+------------------------------------------------------
+
+import React, { useState } from 'react';
+import logo from './logo.svg';
+import './App.css';
+
+function App() {
+
+  const mensaje = "Pulsa el boton de abajo para volverme invisible"
+  const [situacion, setSituacion] = useState(true);
+
+  function ocultar() {
+    setSituacion(false);
+  }
+
+  function desocultar() {
+    setSituacion(true);
+  }
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+         {situacion && <p>{mensaje}</p>}
+        <button onClick = {ocultar}>Pulsame para hacerme invisible</button>
+        <button onClick = {desocultar}>Pulsame para hacerme visible</button>
+      </header>
+    </div>
+  );
+}
+
+export default App;
+
+
+------------------------------------------------------------------------------------------------------------
+
+
+import React, { useState } from 'react';
+import logo from './logo.svg';
+import './App.css';
+
+function App() {
+
+    const [checkeado1, setcheckeado1] = useState(false);
+    const [checkeado2, setcheckeado2] = useState(false);
+    const [checkeado3, setcheckeado3] = useState(false);
+    const [checkeado4, setcheckeado4] = useState(false);
+    const [checkeado5, setcheckeado5] = useState(false);
+
+    function ActualizarCheck1(event) {
+        setcheckeado1(event.target.checkeado1);
+    }
+    function ActualizarCheck2(event) {
+        setcheckeado2(event.target.checkeado2);
+    }
+    function ActualizarCheck3(event){
+        setcheckeado3(event.target.checkeado3);
+    }
+    function ActualizarCheck4(event) {
+        setcheckeado4(event.target.checkeado4);
+    }
+    function ActualizarCheck5(event) {
+        setcheckeado5(event.target.checkeado5);
+    }
+
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>Sacar al perro:</p><input type = "checkBox" value1 = {checkeado1} onChange = {ActualizarCheck1}/>
+        <p>Recoger la cocina</p><input type = "checkBox" value2 = {checkeado2} onChange = {ActualizarCheck2}/>
+        <p>Limpiar el suelo:</p><input type = "checkBox" value3 = {checkeado3} onChange = {ActualizarCheck3}/>
+        <p>Limpiar las ventanas:</p><input type = "checkBox" value4 = {checkeado4} onChange = {ActualizarCheck4}/>
+        <p>Pasar las aspiradora:</p><input type = "checkBox" value5 = {checkeado5} onChange = {ActualizarCheck5}/>
+      </header>
+    </div>
+  );
+}
+
+export default App;
+
+
+------------------------------------------------------------------------------------------------------------
+
+import React, { useState } from 'react';
+import logo from './logo.svg';
+import './App.css';
+
+function App() {
+
+  const [nombre, setNombre] = useState("");
+
+  const handleChange = (event) => {
+    setNombre(event.target.value);
+  };
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <input type="text" value={nombre} onChange={handleChange} placeholder="Introduzca su nombre:" />
+        {nombre && <p>Hola, {nombre}</p>}
+      </header>
+    </div>
+  );
+}
+
+export default App;
+
+
+------------------------------------------------------
+
+import React, { useState } from 'react';
+import { Incrementar, Decrementar } from './variaciones';
+import logo from './logo.svg';
+import './App.css';
+
+function App() {
+  const [numero, setNumero] = useState(0);
+
+  return (
+    <div className="App">
+      <header className="Ap-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>El numero: {numero}</p>
+        <button onClick={() => Incrementar(numero, setNumero)}>Incrementar</button>
+        <button onClick={() => Decrementar(numero, setNumero)}>Decrementar</button>
+      </header>
+    </div>
+  );
+}
+
+export default App;
+
+
+
+------------------------------------------------------
+
+import React, { useState } from 'react';
+import logo from './logo.svg';
+import './App.css';
+
+function App() {
+
+  const [nombre, setNombre] = useState("");
+  const lista = [
+    { Elemento : 'Marisco'},
+    { Elemento : 'Cerdo'},
+    { Elemento : 'Cecina'},
+    { Elemento : 'Pescado'},
+    { Elemento : 'Frutas'},
+    { Elemento : 'Pasteles'}
+  ];
+
+  const handleChange = (event) => {
+    setNombre(event.target.value);
+  };
+
+  const listaFiltrada = lista.filter((item) => {
+    return item.Elemento.toLowerCase().startsWith(nombre.toLowerCase());
+  });
+
+  
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <p>Lista de productos:</p>
+        <input type="text"  value={nombre} onChange={handleChange} placeholder="Filtrar por nombre"/>
+        <div>
+          {listaFiltrada.length > 0 ? (
+            listaFiltrada.map((item, index) => (
+              <div key={index}>
+                <p>{item.Elemento}</p>
+              </div>
+            ))
+          ) : (
+            <p>No se contraron elementos.</p>
+          )}
+        </div>
+      </header>
+    </div>
+  );
+}
+
+export default App;
+
+
+------------------------------------------------------
+
+import React, { useState, useEffect } from 'react';
+
+function Asignaturas({ alumno }) {
+    const [notaPromedio, setNotaPromedio] = useState(0);
+
+    const calcularPromedio = () => {
+        let totalPromedios = 0;
+
+        for (let asignatura in alumno.asignaturas) {
+                let notas = alumno.asignaturas[asignatura];
+                totalPromedios += notas.promedio;  
+        }
+
+        const promedioGeneral = totalPromedios / 3;
+        setNotaPromedio(promedioGeneral);
+    };
+
+    useEffect(() => {
+        calcularPromedio();
+    }, [alumno]);
+
+    return (
+        <div>
+            
+            {Object.keys(alumno.asignaturas).map((asignatura) => {
+                const notas = alumno.asignaturas[asignatura];
+                return (
+                    <div key={asignatura}>
+                        <h4>{asignatura}</h4>
+                        <ul>
+                            <li>Primera evaluación: {notas.primera_evaluacion}</li>
+                            <li>Segunda evaluación: {notas.segunda_evaluacion}</li>
+                            <li>Tercera evaluación: {notas.tercera_evaluacion}</li>
+                            <li>Promedio: {notas.promedio}</li>
+                        </ul>
+                    </div>
+                );
+            })}
+            <h4>Promedio General: {notaPromedio.toFixed(2)}</h4>
+        </div>
+    );
+}
+
+export default Asignaturas;
+
+------------------------------------------------------
+
+
+import React, { useState, useEffect } from 'react';
+import logo from './logo.svg';
+import Asignaturas from './Asignaturas';
+import './App.css';
+
+
+
+function App() {
+  const [ListaAlumnos, setListaAlumnos] = useState([]);
+  const [showElements, setShowElements] = useState({});
+  const [filtrado, setFiltrado] = useState("");
+
+  useEffect(() => {
+    const fetchListaArticulos = async () => {
+      const response = await fetch('./alumnos.json');
+      const data = await response.json();
+      setListaAlumnos(data.alumnos);
+    };
+    fetchListaArticulos();
+  }, []);
+
+  const setNotasVisibilidad = (nombreAlumno) => {
+    setShowElements((prevState) => ({
+      ...prevState,
+      [nombreAlumno]: !prevState[nombreAlumno]
+    }));
+  };
+
+  const handleChange = (event) => {
+    setFiltrado(event.target.value);
+  };
+
+  const AlumnoFiltrado = ListaAlumnos.filter((alumno) => {
+    return alumno.nombre.toLowerCase().startsWith(filtrado.toLowerCase());
+  });
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <input type="text"  value={filtrado} onChange={handleChange} placeholder="Filtrar por nombre"/>
+        <ul>
+          {AlumnoFiltrado.map((alumno) => (
+            <div key={alumno.nombre}>
+              <button onClick={() => setNotasVisibilidad(alumno.nombre)}>{alumno.nombre}</button>
+              {showElements[alumno.nombre] && <Asignaturas alumno={alumno} />}
+            </div>
+          ))}
+        </ul>
+      </header>
+    </div>
+  );
+}
+
+export default App;
+
+------------------------------------------------------
+
+import React, { useState, useEffect } from 'react';
+
+function Carrito({ carrito }) {
+
+  const [cantidadTotal, setCantidad] = useState ()
+
+  const establecerCantidad = (cantidad) => {
+      const newCantidad = (cantidad.target.value)
+      setCantidad(newCantidad);
+  };
+
+
+  return (
+    <div>
+      <h2>Carrito de la Compra</h2>
+      <ul>
+        {carrito.map((articulo) => (
+          <li key={articulo.id}>
+            <p>{articulo.id} - {articulo.nombre}</p>
+            <input type="number"  step="1" min="0" value={cantidadTotal} onChange={establecerCantidad}/>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default Carrito;
+
+
+------------------------------------------------------
+
+import React, { useState, useEffect } from 'react';
+import logo from './logo.svg';
+import './App.css';
+import Carrito from './Carrito';
+
+function App() {
+  const [ListaArticulos, setListaArticulos] = useState([]);
+  const [CarritoCompra, setCarritoCompra] = useState([]);
+  const [showElement, setShowElement] = useState(false);
+
+  useEffect(() => {
+    const fetchListaArticulos = async () => {
+      const response = await fetch('./articulos_navideños.json');
+      const data = await response.json();
+      setListaArticulos(data);
+    };
+    fetchListaArticulos();
+  }, []);
+
+  const setCarritoVisibilidad = () => {
+    setShowElement((prevState) => !prevState);
+  };
+
+  const añadirAlCarrito = (articulo) => {
+    if (!CarritoCompra.some((item) => item.id === articulo.id)) {
+      setCarritoCompra([...CarritoCompra, articulo]);
+    } 
+  };
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <ul>
+          {ListaArticulos.map((articulo) => (
+            <li key={articulo.id}>
+              <h3>{articulo.nombre}</h3>
+              <p>{articulo.descripcion}</p>
+              <p>{articulo.precio}</p>
+              <input
+                type="button"
+                value="Añadir al carrito"
+                onClick={() => añadirAlCarrito(articulo)}
+              />
+            </li>
+          ))}
+        </ul>
+        <input
+          type="button"
+          value={showElement ? 'Ocultar carrito' : 'Mostrar carrito'}
+          onClick={setCarritoVisibilidad}
+        />
+        <div>{showElement && <Carrito carrito={CarritoCompra} />}</div>
+      </header>
+    </div>
+  );
+}
+
+export default App;
+
+------------------------------------------------------
+------------------------------------------------------
+------------------------------------------------------
+
+
+
+

@@ -6,13 +6,11 @@ function Asignaturas({ alumno }) {
     const calcularPromedio = () => {
         let totalPromedios = 0;
 
-        // Usando 'for...in' para iterar sobre las asignaturas
         for (let asignatura in alumno.asignaturas) {
                 let notas = alumno.asignaturas[asignatura];
-                totalPromedios += notas.promedio;  // Sumamos el promedio de la asignatura
+                totalPromedios += notas.promedio;  
         }
 
-        // Calculamos el promedio general
         const promedioGeneral = totalPromedios / 3;
         setNotaPromedio(promedioGeneral);
     };
